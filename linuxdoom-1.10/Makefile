@@ -6,8 +6,8 @@
 #
 CC=  gcc  # gcc or g++
 
-CFLAGS=-g -Wall -DNORMALUNIX -DLINUX # -DUSEASM 
-LDFLAGS=-L/usr/X11R6/lib
+CFLAGS=-g -Wall -DNORMALUNIX -DLINUX -DSNDSERV -DSNDSRV -Wno-unused-variable -Wno-unused-but-set-variable -m32 -std=c++11 # -DUSEASM 
+LDFLAGS=-L/usr/lib/i386-linux-gnu/
 LIBS=-lXext -lX11 -lnsl -lm
 
 # subdirectory for objects
@@ -78,18 +78,27 @@ OBJS=				\
 		$(O)/sounds.o
 
 all:	 $(O)/linuxxdoom
+	@echo "Copying WAD files..."
+	cp /usr/share/games/doom/*.wad $(O)/
 
 clean:
 	rm -f *.o *~ *.flc
-	rm -f linux/*
+	rm -f $(O)/*
+	rmdir $(O)
 
+makedir:
+	mkdir -p $(O)
+
+build:	$(O)/linuxxdoom
 $(O)/linuxxdoom:	$(OBJS) $(O)/i_main.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) $(O)/i_main.o \
 	-o $(O)/linuxxdoom $(LIBS)
 
-$(O)/%.o:	%.c
+$(O)/%.o:	%.c | object
 	$(CC) $(CFLAGS) -c $< -o $@
 
+object:
+	mkdir -p $(O)
 #############################################################
 #
 #############################################################

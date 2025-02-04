@@ -46,7 +46,7 @@ int XShmGetEventBase( Display* dpy ); // problems with g++?
 #include <sys/socket.h>
 
 #include <netinet/in.h>
-#include <errnos.h>
+#include <errno.h>
 #include <signal.h>
 
 #include "doomstat.h"
@@ -692,6 +692,18 @@ void grabsharedmemory(int size)
 void I_InitGraphics(void)
 {
 
+#ifdef USE_SVGA
+    if (M_CheckParm("-svga"))
+    {
+        if (I_InitSVGA())
+        {
+            // Override default update function
+            I_FinishUpdate = I_UpdateSVGAScreen;
+            return;
+        }
+    }
+#endif
+
     char*		displayname;
     char*		d;
     int			n;
@@ -817,6 +829,7 @@ void I_InitGraphics(void)
 					attribmask,
 					&attribs );
 
+    XInstallColormap( X_display, X_cmap );
     XDefineCursor(X_display, X_mainWindow,
 		  createnullcursor( X_display, X_mainWindow ) );
 

@@ -531,9 +531,9 @@ void P_GroupLines (void)
 	    total++;
 	}
     }
-	
-    // build line tables for each sector	
-    linebuffer = Z_Malloc (total*4, PU_LEVEL, 0);
+
+    // build line tables for each sector
+    linebuffer = Z_Malloc (total*sizeof(*linebuffer), PU_LEVEL, 0);
     sector = sectors;
     for (i=0 ; i<numsectors ; i++, sector++)
     {
@@ -551,11 +551,11 @@ void P_GroupLines (void)
 	}
 	if (linebuffer - sector->lines != sector->linecount)
 	    I_Error ("P_GroupLines: miscounted");
-			
+
 	// set the degenmobj_t to the middle of the bounding box
 	sector->soundorg.x = (bbox[BOXRIGHT]+bbox[BOXLEFT])/2;
 	sector->soundorg.y = (bbox[BOXTOP]+bbox[BOXBOTTOM])/2;
-		
+
 	// adjust bounding box to map blocks
 	block = (bbox[BOXTOP]-bmaporgy+MAXRADIUS)>>MAPBLOCKSHIFT;
 	block = block >= bmapheight ? bmapheight-1 : block;

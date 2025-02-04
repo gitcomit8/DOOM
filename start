@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Start Xephyr virtual X server in the background
+Xephyr :2 -ac -screen 640x480x8 &
+
+# Give Xephyr a moment to initialize
+sleep 1
+
+# Set DISPLAY environment variable and run Doom
+DISPLAY=:2
+./linux/linuxxdoom
+
+# Clean up Xephyr when Doom exits
+pkill Xephyr
